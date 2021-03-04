@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react'
 import { View, StyleSheet, Text, Dimensions } from 'react-native'
 
-const Two = props => {
+const Stack1 = props => {
     const name = props.navigation.getParam('name')
     const email = props.navigation.getParam('email')
     const token = props.navigation.getParam('token')
@@ -15,4 +15,4 @@ const Two = props => {
     )
 }
 
-export default Two
+export default Stack1
