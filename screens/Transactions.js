@@ -8,36 +8,32 @@ import ShopsChoice from '../components/ShopsChoice'
 
 const Transactions = props => {
 
-    const [name,setName] = useState()
-    const [email,setEmail] = useState()
-    const [token,setToken] = useState()
-    const [url,setUrl] = useState()
+    var email = ""
+    var url = ""
+    var token = ""
+    var name = ""
+    const [userData, setUserData] = useState({})
     const [loading, setLoading] = useState(true)
     const [noResults, setNoResults] = useState(false)
     const [dataSource, setDataSource] = useState({data:[]})
 
     useEffect(()=>{
       (async()=>{
+        console.log("1st started")
         try {
-          const email = await AsyncStorage.getItem('email');
-          const name = await AsyncStorage.getItem('name');
-          const token = await AsyncStorage.getItem('token');
-          const url = await AsyncStorage.getItem('url');
-
-          //set the below parameters to a single block to avoid multiple re renders
-
-          setName(name)
-          setEmail(email)
-          setToken(token)
-          setUrl(url)
+          email = await AsyncStorage.getItem('email');
+          name = await AsyncStorage.getItem('name');
+          token = await AsyncStorage.getItem('token');
+          url = await AsyncStorage.getItem('url');
 
         } catch (error) {
           // Error retrieving data
           console.log(error)
         }
-      })();
 
-      (async()=>{
+        //from here
+        //console.log("2nd started") 
+        //console.log(email)
         fetch('https://rental-portal.000webhostapp.com/consumer/getenrolledshops.php', {
                 method: 'POST',
                 headers: {
@@ -56,12 +52,15 @@ const Transactions = props => {
                       if(responseJson===0){
                         setNoResults(true)
                         setLoading(false)
+                        setUserData({name: name, url: url, email: email, token: token})
                       }
                       else{
                       setDataSource({ data: responseJson})
                       setLoading(false)
+                      //console.log(responseJson)
                       setNoResults(false)
-                      console.log(dataSource)
+                      setUserData({name: name, url: url, email: email, token: token})
+                      //console.log(dataSource)
                       }
                     }).catch((error) => {
                       console.error(error);
@@ -76,21 +75,21 @@ const Transactions = props => {
     if(loading){
       return(
         <View style={{justifyContent:"center", alignItems: "center",alignContent:"center", flex:1, backgroundColor: '#ccc'}}>
-          <ActivityIndicator size={Colors.primary} size="large" />
+          <ActivityIndicator color={Colors.primary} size="large" />
         </View>
       )
-    }
+    } 
 
     if(noResults){
       return(
         <View style={styles.rootContainer}>
             <Card style={styles.summary}>
-              <Image style={styles.image} source={{uri: url}} />
+              <Image style={styles.image} source={{uri: userData.url}} />
               <View style={styles.greetingContainer}>
                   <Text style={{textAlign: "center",fontSize: 15}}>Welcome!</Text>
-                  <Text style={{...styles.greetingText, fontWeight: "bold"}}>{name}</Text>
+                  <Text style={{...styles.greetingText, fontWeight: "bold"}}>{userData.name}</Text>
                   <Text style={{textAlign: "center",fontSize: 15}}>Authentication:</Text>
-                  <Text style={{...styles.greetingText, fontWeight: "bold"}}>{email}</Text>
+                  <Text style={{...styles.greetingText, fontWeight: "bold"}}>{userData.email}</Text>
                   </View>
             </Card>
             <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
@@ -103,12 +102,12 @@ const Transactions = props => {
     return(
         <View style={styles.rootContainer}>
             <Card style={styles.summary}>
-              <Image style={styles.image} source={{uri: url}} />
+              <Image style={styles.image} source={{uri: userData.url}} />
               <View style={styles.greetingContainer}>
                   <Text style={{textAlign: "center",fontSize: 15}}>Welcome!</Text>
-                  <Text style={{...styles.greetingText, fontWeight: "bold"}}>{name}</Text>
+                  <Text style={{...styles.greetingText, fontWeight: "bold"}}>{userData.name}</Text>
                   <Text style={{textAlign: "center",fontSize: 15}}>Authentication:</Text>
-                  <Text style={{...styles.greetingText, fontWeight: "bold"}}>{email}</Text>
+                  <Text style={{...styles.greetingText, fontWeight: "bold"}}>{userData.email}</Text>
                   </View>
             </Card>
             <FlatList data={dataSource.data} keyExtractor={ item => item.shopid } renderItem={ itemData => <ShopsChoice name={itemData.item.name} shopid={itemData.item.shopid} /> } />

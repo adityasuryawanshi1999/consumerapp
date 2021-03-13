@@ -8,7 +8,7 @@ import Three from '../screens/Three'
 import LoginPage from '../screens/LoginPage'
 import { createAppContainer } from 'react-navigation';
 import {Ionicons} from '@expo/vector-icons'
-import Stack1 from '../screens/stack1';
+import Stack1 from '../screens/Stack1';
 
 
 const stackTransaction = createStackNavigator({
