@@ -110,7 +110,7 @@ const Transactions = props => {
                   <Text style={{...styles.greetingText, fontWeight: "bold"}}>{userData.email}</Text>
                   </View>
             </Card>
-            <FlatList data={dataSource.data} keyExtractor={ item => item.shopid } renderItem={ itemData => <ShopsChoice name={itemData.item.name} shopid={itemData.item.shopid} /> } />
+            <FlatList data={dataSource.data} keyExtractor={ item => item.shopid } renderItem={ itemData => <ShopsChoice name={itemData.item.name} shopid={itemData.item.shopid} pressHandler = { ()=> {props.navigation.navigate('second',{email: userData.email, shopid: itemData.item.shopid})}} /> } />
         </View>
     )
 }

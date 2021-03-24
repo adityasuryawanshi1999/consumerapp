@@ -8,7 +8,7 @@ const ShopsChoice = props => {
     let TouchableCmp = Platform.OS === 'android' && Platform.Version>=21 ? TouchableNativeFeedback : TouchableOpacity
 
     return(
-        <TouchableCmp onPress={()=>{}} >
+        <TouchableCmp onPress={props.pressHandler} >
             <Card style={styles.container}>
                 <View style={styles.textContent}>
                     <Text>Name: {props.name}</Text>
