@@ -1,7 +1,8 @@
-import { Text, View, StyleSheet, Image, Button, Platform, Touchable, Dimensions } from 'react-native'
+import { Text, View, StyleSheet, Image, Button, Platform, Touchable, Dimensions, Alert } from 'react-native'
 import React from 'react'
 import Card from './Card'
 import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-handler'
+import Colors from '../constants/Colors'
 
 const ActiveResultItem = props => {
 
@@ -20,6 +21,44 @@ const ActiveResultItem = props => {
     const diffTime = date1 - date2;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     //console.log(diffDays*fine)
+    var future = new Date(); // get today date
+    future.setDate(future.getDate() + 7); // add 7 days
+    var finalDate = future.getFullYear() +'-'+ ((future.getMonth() + 1) < 10 ? '0' : '') + (future.getMonth() + 1) +'-'+ future.getDate();
+    console.log(finalDate)
+
+    const update = async() => {
+        if(date1===date2){
+            (async() => {
+                fetch('https://rental-portal.000webhostapp.com/consumer/reissueproduct.php', {
+                    method: 'POST',
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                   
+                      // Getting the id.
+                      table: props.shopid+"-transaction",
+                      email: props.email,
+                      pid: props.productId,
+                      returnDate: finalDate
+                   
+                    }) 
+                    
+                  }).then((response) => response.json())
+                        .then((responseJson) => {
+                          Alert.alert("Status", responseJson, [{text: "Okay", onPress: ()=> {} }])
+                        }).catch((error) => {
+                          console.error(error);
+                        }); 
+            })();
+        }
+        else{
+            Alert.alert("Date Collapsed/Early","Your Re-Issue date has either collapsed or it isn't the final day of your issued product.",[{text: "Okay", onPress: ()=> {} }])
+        }
+        props.refreshFunc();
+    }
+
     if(diffTime<=0){
         collectedFine = 0
         }
@@ -37,7 +76,11 @@ const ActiveResultItem = props => {
                     <Text>Return Date: {props.returnDate}</Text>
                     <Text>Fine: {collectedFine}</Text>
                 </View>
-
+                <TouchableCmp onPress={update}>
+                    <View style={styles.button}>
+                        <Text>Re-Issue</Text>
+                    </View>
+                </TouchableCmp>
             </Card>
         </TouchableCmp>
     )
@@ -58,6 +101,18 @@ const styles = StyleSheet.create({
     },
     textContent:{
         width: Dimensions.get('window').width*0.60
+    },
+    button:{
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: Colors.primary,
+        //width: Dimensions.get('screen').width*0.60,
+        alignContent: "center",
+        height: 40,
+        borderRadius: 20,
+        marginHorizontal: 20,
+        overflow: "hidden",
+        marginTop: 4
     }
 })
 

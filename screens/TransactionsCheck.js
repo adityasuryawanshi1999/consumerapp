@@ -23,7 +23,7 @@ const TransactionsCheck = props => {
                   // Getting the id.
                   email: email,
                   table: shopid+"-transaction",
-                  table2: shopid+"products"
+                  table2: shopid+"-products"
                
                 }) 
                 
@@ -34,9 +34,9 @@ const TransactionsCheck = props => {
                           setNoResults(true)
                       }
                       else{
-                      //console.log(responseJson)
+                      console.log(responseJson)
                       setDataSource({ data: responseJson})
-                      //console.log(dataSource)
+                      console.log(dataSource)
                       setLoading(false)
                       setNoResults(false)}
                     }).catch((error) => {
@@ -46,6 +46,42 @@ const TransactionsCheck = props => {
                     }); 
         })();
     },[])
+
+    const refresh = async() => {
+      console.log("refresh")
+      fetch('https://rental-portal.000webhostapp.com/consumer/fetchactivetransactions.php', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+         
+            // Getting the id.
+            email: email,
+            table: shopid+"-transaction",
+            table2: shopid+"-products"
+         
+          }) 
+          
+        }).then((response) => response.json())
+              .then((responseJson) => {
+                if(responseJson===0){
+                    setLoading(false)
+                    setNoResults(true)
+                }
+                else{
+                console.log(responseJson)
+                setDataSource({ data: responseJson})
+                console.log(dataSource)
+                setLoading(false)
+                setNoResults(false)}
+              }).catch((error) => {
+                console.log(error);
+                setLoading(false)
+                setNoResults(true)
+              }); 
+  }
 
     if(loading){
         return(
@@ -65,7 +101,7 @@ const TransactionsCheck = props => {
 
     return(
         <View style={{flex: 1, backgroundColor: '#ccc', alignItems: "center", paddingTop: 2}}>
-            <FlatList data={dataSource.data} keyExtractor={ item => item.product_id } renderItem={ itemData => <ActiveResultItem issueDate={itemData.item.issue_date} name={itemData.item.name} productId={itemData.item.product_id} returnDate={itemData.item.return_date} /> } />
+            <FlatList data={dataSource.data} keyExtractor={ item => item.product_id } renderItem={ itemData => <ActiveResultItem issueDate={itemData.item.issue_date} name={itemData.item.name} productId={itemData.item.product_id}  email={email} shopid={shopid} returnDate={itemData.item.return_date}  refreshFunc={refresh} /> } />
         </View>
     )
 }

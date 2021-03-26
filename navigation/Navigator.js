@@ -9,11 +9,18 @@ import LoginPage from '../screens/LoginPage'
 import { createAppContainer } from 'react-navigation';
 import {Ionicons} from '@expo/vector-icons'
 import TransactionsCheck from '../screens/TransactionsCheck';
+import EnrolledShops from '../screens/EnrolledShops'
+import ProductsPage from '../screens/ProductsPage';
 
 
 const stackTransaction = createStackNavigator({
     first: Transactions,
     second: TransactionsCheck
+})
+
+const stackProducts = createStackNavigator({
+    ProductsFirst: EnrolledShops,
+    ProductsSecond: ProductsPage
 })
 
 
@@ -23,7 +30,7 @@ const tabNavigator = createBottomTabNavigator({
             return <Ionicons name='albums' size={25} color={'black'} />
         })
     }},
-    Search: { screen: Two, navigationOptions: {
+    Search: { screen: stackProducts, navigationOptions: {
         tabBarIcon: (tabInfo => {
             return <Ionicons name='search' size={25} color={'black'} />
         }),
