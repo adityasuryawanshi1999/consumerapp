@@ -5,10 +5,10 @@ import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-
 
 const ProductItem = props => {
 
-    //let TouchableCmp = Platform.OS === 'android' && Platform.Version>=21 ? TouchableNativeFeedback : TouchableOpacity
+    let TouchableCmp = Platform.OS === 'android' && Platform.Version>=21 ? TouchableNativeFeedback : TouchableOpacity
 
     return(
-        <TouchableOpacity onPress={props.onViewDetail} >
+        <TouchableCmp onPress={props.onViewDetail} >
             <Card style={styles.container}>
                 <Image style={styles.image} source={{uri: props.url}} />
                 <View style={styles.textContent}>
@@ -17,7 +17,7 @@ const ProductItem = props => {
                     <Text>Status: {props.issued}</Text>
                 </View>
             </Card>
-        </TouchableOpacity>
+        </TouchableCmp>
     )
 
 }

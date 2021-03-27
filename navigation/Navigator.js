@@ -11,6 +11,7 @@ import {Ionicons} from '@expo/vector-icons'
 import TransactionsCheck from '../screens/TransactionsCheck';
 import EnrolledShops from '../screens/EnrolledShops'
 import ProductsPage from '../screens/ProductsPage';
+import ProductsDetailPage from '../screens/ProductsDetailPage';
 
 
 const stackTransaction = createStackNavigator({
@@ -20,7 +21,8 @@ const stackTransaction = createStackNavigator({
 
 const stackProducts = createStackNavigator({
     ProductsFirst: EnrolledShops,
-    ProductsSecond: ProductsPage
+    ProductsSecond: ProductsPage,
+    ProductsThird: ProductsDetailPage
 })
 
 
