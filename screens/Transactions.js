@@ -70,7 +70,7 @@ const Transactions = props => {
 
       })();
 
-    },[])
+    },[props.navigationOptions])
 
     if(loading){
       return(

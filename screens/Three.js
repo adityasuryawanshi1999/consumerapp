@@ -1,8 +1,14 @@
 import React, { useState,useEffect } from 'react'
-import { View, StyleSheet, Text, Dimensions, Button } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, Button, Platform, Alert} from 'react-native'
 import { StackActions, NavigationActions } from 'react-navigation'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Google from 'expo-google-app-auth'
+import Header from '../components/Header'
+import QRCode from 'react-native-qrcode-svg'
+import Card from '../components/Card'
+import { ceil } from 'react-native-reanimated'
+import { TextInput, TouchableOpacity, TouchableNativeFeedback, ScrollView } from 'react-native-gesture-handler'
+import Colors from '../constants/Colors'
 
 const Three = props => {
 
@@ -10,6 +16,10 @@ const Three = props => {
     const email = props.navigation.getParam('email')
     const token = props.navigation.getParam('token')
     const url = props.navigation.getParam('url')
+    const [shopid, setShopid] = useState("")
+
+    let TouchableCmp = Platform.OS === 'android' && Platform.Version>=21 ? TouchableNativeFeedback : TouchableOpacity
+
 
     const signOut = async(r) => {
         //console.log('entered')
@@ -46,12 +56,109 @@ const Three = props => {
         
     }
 
+    const enroll = async() => {
+      console.log("enroll started")
+      fetch('https://rental-portal.000webhostapp.com/consumer/temp.php', {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+             
+                // Getting the id.
+                email: email,
+                shopid: shopid
+              }) 
+              
+            }).then((response) => response.text())
+                  .then((responseJson) => {
+                    console.log(responseJson)
+                    if(responseJson===0){
+                      Alert.alert("Already Enrolled", "The shop you're trying to enroll is already enrolled for your account.", [{text: "Okay", onPress: ()=> {} }])
+                    }else{
+                      //props.navigation.navigate('Transactions')
+                    }
+                  }).catch((error) => {
+                    console.log(error);
+                  }); 
+    }
+
     return(
-        <View>
-            <Text>Hi</Text>
-            <Button title="Logout" onPress={()=>signOut(token)} />
+        <ScrollView style={{flex: 1, backgroundColor: '#ccc'}}>
+        <View style={{flex:1, alignItems: "center", justifyContent: "space-between", paddingBottom: 40, backgroundColor: '#ccc'}}>
+            <Header />
+            <View style={styles.qrcontainer}>
+              <QRCode value={email} size={250} />
+            </View>
+            <Card style={styles.enrollContainer}>
+              <Text style={{marginBottom: 2}}>Enter Shop ID you want to enroll for:</Text>
+              <TextInput style={styles.text} value={shopid} onChangeText={ text => setShopid(text)} />
+              <TouchableCmp onPress={enroll}>
+                <View style={styles.enrollButton}>
+                  <Text>Enroll</Text>
+                </View>
+              </TouchableCmp>
+            </Card>
+            <TouchableCmp onPress={()=>signOut(token)}>
+              <View style={styles.logoutButton}>
+                <Text>Logout</Text>
+              </View>
+            </TouchableCmp>
+            <Text style={{color: 'black', marginTop: 20}}>It was a pleasure having you, be back soon! :)</Text>
         </View>
+        </ScrollView> 
     )
 }
+
+Three['navigationOptions'] = () => (
+  { 
+    headerShown: true
+  }
+)
+
+const styles = StyleSheet.create({
+  header: {
+    height: Dimensions.get('screen').height*0.15
+  },
+  qrcontainer:{
+    alignItems: "center",
+    marginVertical: 10
+  },
+  enrollContainer:{
+    marginTop: 20,
+    alignItems: "center",
+    width: Dimensions.get('screen').width*0.97,
+    alignContent: "center",
+  },
+  text:{
+    backgroundColor: '#ccc',
+    width: Dimensions.get('window').width*0.80,
+    height: 50,
+    borderRadius: 10,
+    paddingHorizontal: 5
+  },
+  enrollButton: {
+    width: Dimensions.get('screen').width*0.5,
+    backgroundColor: Colors.primary,
+    height: 45,
+    borderRadius: 20,
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 4,
+    overflow: "hidden"
+  },
+  logoutButton:{
+    width: Dimensions.get('screen').width*0.5,
+    backgroundColor: 'red',
+    height: 45,
+    borderRadius: 20,
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40
+  }
+})
 
 export default Three

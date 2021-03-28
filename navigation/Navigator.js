@@ -26,6 +26,7 @@ const stackProducts = createStackNavigator({
 })
 
 
+
 const tabNavigator = createBottomTabNavigator({
     Transactions: { screen: stackTransaction, navigationOptions: {
         tabBarIcon: (tabInfo => {
