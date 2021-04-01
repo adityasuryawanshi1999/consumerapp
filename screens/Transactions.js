@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react'
-import { View, StyleSheet, Text, Dimensions, Button, ScrollView, Image, ActivityIndicator, FlatList } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, Button, ScrollView, Image, ActivityIndicator, FlatList, RefreshControl } from 'react-native'
 import Card from '../components/Card'
 import Colors from '../constants/Colors'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -16,6 +16,7 @@ const Transactions = props => {
     const [loading, setLoading] = useState(true)
     const [noResults, setNoResults] = useState(false)
     const [dataSource, setDataSource] = useState({data:[]})
+    const [refreshing, setRefreshing] = useState(false)
 
     useEffect(()=>{
       (async()=>{
@@ -72,6 +73,47 @@ const Transactions = props => {
 
     },[props.navigationOptions])
 
+    const refresh = async() => {
+      setRefreshing(true)
+      fetch('https://rental-portal.000webhostapp.com/consumer/getenrolledshops.php', {
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+               
+                  // Getting the id.
+                  email: userData.email
+               
+                }) 
+                
+              }).then((response) => response.json())
+                    .then((responseJson) => {
+                      console.log(responseJson)
+                      if(responseJson===0){
+                        setNoResults(true)
+                        setLoading(false)
+                        setRefreshing(false)
+                      }
+                      else{
+                      setDataSource({ data: responseJson})
+                      setLoading(false)
+                      //console.log(responseJson)
+                      setNoResults(false)
+                      setRefreshing(false)
+                      //console.log(dataSource)
+                      }
+                    }).catch((error) => {
+                      console.log(error);
+                      setLoading(false)
+                      setNoResults(true)
+                      setRefreshing(false)
+                    }); 
+      setRefreshing(false)
+      console.log('worked till here')
+    }
+    
     if(loading){
       return(
         <View style={{justifyContent:"center", alignItems: "center",alignContent:"center", flex:1, backgroundColor: '#ccc'}}>
@@ -110,7 +152,7 @@ const Transactions = props => {
                   <Text style={{...styles.greetingText, fontWeight: "bold"}}>{userData.email}</Text>
                   </View>
             </Card>
-            <FlatList data={dataSource.data} keyExtractor={ item => item.shopid } renderItem={ itemData => <ShopsChoice name={itemData.item.name} shopid={itemData.item.shopid} pressHandler = { ()=> {props.navigation.navigate('second',{email: userData.email, shopid: itemData.item.shopid})}} /> } />
+            <FlatList refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />} data={dataSource.data} keyExtractor={ item => item.shopid } renderItem={ itemData => <ShopsChoice name={itemData.item.name} shopid={itemData.item.shopid} pressHandler = { ()=> {props.navigation.navigate('second',{email: userData.email, shopid: itemData.item.shopid})}} /> } />
         </View>
     )
 }

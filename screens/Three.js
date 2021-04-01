@@ -58,7 +58,7 @@ const Three = props => {
 
     const enroll = async() => {
       console.log("enroll started")
-      fetch('https://rental-portal.000webhostapp.com/consumer/temp.php', {
+      fetch('https://rental-portal.000webhostapp.com/consumer/enrollcustomer.php', {
               method: 'POST',
               headers: {
                 Accept: 'application/json',
@@ -71,13 +71,13 @@ const Three = props => {
                 shopid: shopid
               }) 
               
-            }).then((response) => response.text())
+            }).then((response) => response.json())
                   .then((responseJson) => {
                     console.log(responseJson)
                     if(responseJson===0){
                       Alert.alert("Already Enrolled", "The shop you're trying to enroll is already enrolled for your account.", [{text: "Okay", onPress: ()=> {} }])
                     }else{
-                      //props.navigation.navigate('Transactions')
+                      props.navigation.navigate('Transactions')
                     }
                   }).catch((error) => {
                     console.log(error);
