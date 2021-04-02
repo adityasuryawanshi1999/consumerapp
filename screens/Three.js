@@ -100,11 +100,13 @@ const Three = props => {
                 </View>
               </TouchableCmp>
             </Card>
-            <TouchableCmp onPress={()=>signOut(token)}>
-              <View style={styles.logoutButton}>
-                <Text>Logout</Text>
-              </View>
-            </TouchableCmp>
+            <View style={styles.wrapper}>
+              <TouchableCmp onPress={()=>signOut(token)}>
+                <View style={styles.logoutButton}>
+                  <Text>Logout</Text>
+                </View>
+              </TouchableCmp>
+            </View>
             <Text style={{color: 'black', marginTop: 20}}>It was a pleasure having you, be back soon! :)</Text>
         </View>
         </ScrollView> 
@@ -157,6 +159,8 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "center",
+  },
+  wrapper: {
     marginTop: 40
   }
 })
