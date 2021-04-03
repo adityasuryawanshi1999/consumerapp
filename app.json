@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "consumerapp",
+    "name": "Rental Portal",
     "slug": "consumerapp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,6 +23,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.aditya1999.consumerapp",
+      "config":{
+        "googleSignIn":{
+          "apiKey": "AIzaSyAJHc12SFRViKmhU99g2Zdc43_265xTaQ8",
+          "certificateHash" : "70CF007F2C2F442BE1DD200892D3D03F3B2F7860"
+        }
       }
     },
     "web": {

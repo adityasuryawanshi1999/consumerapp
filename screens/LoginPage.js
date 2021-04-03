@@ -51,7 +51,7 @@ const LoginPage = props => {
             androidClientId:
               "771336740186-p0vd3pn0b2foilc39iuruounvb06ciik.apps.googleusercontent.com",
             iosClientId: "771336740186-l2mt8lerr1pj5dukiskm6pnbe27uoi84.apps.googleusercontent.com",
-            androidStandaloneAppClientId: "771336740186-50346pht0c5i1ma0k2ac8f0bbo65dbhd.apps.googleusercontent.com",
+            androidStandaloneAppClientId: "771336740186-idt6hmslj04ul37p4a623544m940trrn.apps.googleusercontent.com",
             scopes: ["profile", "email"]
           })
           
