@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, Dimensions, Button, ScrollView, Image, Activity
 import Card from '../components/Card'
 import Colors from '../constants/Colors'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import ShopChoice from '../components/ShopsChoice'
+import ShopsChoice from '../components/ShopsChoice'
 
 const Transactions = props => {
 

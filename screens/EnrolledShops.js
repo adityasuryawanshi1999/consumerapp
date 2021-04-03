@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react'
-import { View, StyleSheet, Text, Dimensions, ActivityIndicator, FlatList } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, ActivityIndicator, FlatList, RefreshControl } from 'react-native'
 import Colors from '../constants/Colors'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import ShopsChoice from '../components/ShopsChoice'
@@ -13,6 +13,7 @@ const EnrolledShops = props => {
     const [loading, setLoading] = useState(true)
     const [noResults, setNoResults] = useState(false)
     const [dataSource, setDataSource] = useState({data:[]})
+    const [refreshing, setRefreshing] = useState(false)
 
     useEffect(()=>{
         (async()=>{
@@ -68,6 +69,42 @@ const EnrolledShops = props => {
         })();
   
       },[])
+
+    const refresh = async() => {
+          setRefreshing(true)
+          fetch('https://rental-portal.000webhostapp.com/consumer/getenrolledshops.php', {
+                  method: 'POST',
+                  headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                 
+                    // Getting the id. 
+                    email: userData.email
+                 
+                  })  
+                  
+                }).then((response) => response.json())
+                      .then((responseJson) => { 
+                        if(responseJson===0){
+                          setNoResults(true)
+                          setLoading(false)
+                        }
+                        else{
+                        setDataSource({ data: responseJson})
+                        setLoading(false)
+                        //console.log(responseJson)
+                        setNoResults(false)
+                        //console.log(dataSource)
+                        }
+                      }).catch((error) => {
+                        console.log(error);
+                        setLoading(false)
+                        setNoResults(true)
+                      }); 
+          setRefreshing(false)
+    }
   
     if(loading){
       return(
@@ -87,7 +124,7 @@ const EnrolledShops = props => {
 
     return(
         <View style={styles.rootContainer}>
-            <FlatList data={dataSource.data} keyExtractor={ item => item.shopid } renderItem={ itemData => <ShopsChoice name={itemData.item.name} shopid={itemData.item.shopid} pressHandler = { ()=> {props.navigation.navigate('ProductsSecond',{shopid: itemData.item.shopid})}} /> } />
+            <FlatList refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />} data={dataSource.data} keyExtractor={ item => item.shopid } renderItem={ itemData => <ShopsChoice name={itemData.item.name} shopid={itemData.item.shopid} pressHandler = { ()=> {props.navigation.navigate('ProductsSecond',{shopid: itemData.item.shopid})}} /> } />
         </View>
     )
 }
