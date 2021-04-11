@@ -1,10 +1,12 @@
-import { Text, View, StyleSheet, Image, Button, Platform, Touchable, Dimensions, Alert } from 'react-native'
-import React from 'react'
+import { Text, View, StyleSheet, Image, Button, Platform, Touchable, Dimensions, Alert, ActivityIndicator } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import Card from './Card'
 import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-handler'
 import Colors from '../constants/Colors'
 
 const ActiveResultItem = props => {
+
+    const [fine, setFine] = useState(0)
 
     let TouchableCmp = Platform.OS === 'android' && Platform.Version>=21 ? TouchableNativeFeedback : TouchableOpacity
     var today = new Date();
@@ -25,6 +27,33 @@ const ActiveResultItem = props => {
     future.setDate(future.getDate() + 7); // add 7 days
     var finalDate = future.getFullYear() +'-'+ ((future.getMonth() + 1) < 10 ? '0' : '') + (future.getMonth() + 1) +'-'+ future.getDate();
     console.log(finalDate)
+
+    useEffect(()=>{
+        (async()=>{
+          fetch('https://rental-portal.000webhostapp.com/getfine.php', {
+                  method: 'POST',
+                  headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                 
+                    // Getting the id. 
+                    shopId: props.shopid
+                 
+                  })  
+                  
+                }).then((response) => response.json())
+                      .then((responseJson) => { 
+                        setFine(responseJson[0].fine)
+                      }).catch((error) => {
+                        console.log(error);
+                      }); 
+  
+        })();
+  
+      },[])
+  
 
     const update = async() => {
         if(date1===date2){
@@ -64,6 +93,27 @@ const ActiveResultItem = props => {
         }
     else{
         collectedFine = fine*diffDays
+    }
+
+    if(fine===0){
+      return(
+        <TouchableCmp onPress={props.pressHandler} >
+            <Card style={styles.container}>
+                <View style={styles.textContent}>
+                    <Text style={{fontWeight: "bold"}}>{props.name}</Text>
+                    <Text>Product Id: {props.productId}</Text>
+                    <Text>Issue Date: {props.issueDate}</Text>
+                    <Text>Return Date: {props.returnDate}</Text>
+                    <Text>Fine: Calculating</Text>
+                </View>
+                <TouchableCmp onPress={update}>
+                    <View style={styles.button}>
+                        <Text>Re-Issue</Text>
+                    </View>
+                </TouchableCmp>
+            </Card>
+        </TouchableCmp>
+    )
     }
 
     return(

@@ -70,7 +70,7 @@ const Transactions = props => {
 
       })();
 
-    },[props.navigationOptions])
+    },[])
 
     const refresh = async() => {
       setRefreshing(true)
